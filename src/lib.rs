@@ -56,10 +56,10 @@ pub mod prelude {
 // Core System
 // ═══════════════════════════════════════════════════════════════════════
 
-use crate::prelude::*;
 use crate::collectors::AggregatedData;
 use crate::engines::data_collection::DataCollectionEngine;
 use crate::engines::risk_calculation::{RiskCalculationEngine, RiskCalculationResult};
+use crate::prelude::*;
 use crate::visualizers::VisualizationEngine;
 use std::path::PathBuf;
 use tracing::{info, warn};
@@ -131,24 +131,33 @@ impl WarGamesSystem {
         // Step 1: Collect data from all sources
         info!("Step 1/5: Collecting data from multiple sources...");
         let aggregated_data = self.collect_data().await?;
-        info!("✓ Data collection complete: {} data points from {} sources",
-              aggregated_data.data_points.len(),
-              aggregated_data.sources_count);
+        info!(
+            "✓ Data collection complete: {} data points from {} sources",
+            aggregated_data.data_points.len(),
+            aggregated_data.sources_count
+        );
 
         // Step 2: Analyze with Claude AI (or use simulated factors)
         info!("Step 2/5: Analyzing risk factors...");
         let risk_factors = self.analyze_risk_factors(&aggregated_data).await?;
-        info!("✓ Risk analysis complete: {} factors identified", risk_factors.len());
+        info!(
+            "✓ Risk analysis complete: {} factors identified",
+            risk_factors.len()
+        );
 
         // Step 3: Calculate risk scores
         info!("Step 3/5: Calculating comprehensive risk assessment...");
         let risk_result = self.calculate_risk(&risk_factors)?;
         info!("✓ Risk calculation complete:");
-        info!("  - Seconds to midnight: {}", risk_result.seconds_to_midnight);
+        info!(
+            "  - Seconds to midnight: {}",
+            risk_result.seconds_to_midnight
+        );
         info!("  - Risk level: {}", risk_result.risk_level.as_str());
-        info!("  - Confidence interval: ({:.3}, {:.3})",
-              risk_result.confidence_interval.0,
-              risk_result.confidence_interval.1);
+        info!(
+            "  - Confidence interval: ({:.3}, {:.3})",
+            risk_result.confidence_interval.0, risk_result.confidence_interval.1
+        );
 
         // Step 4: Create assessment object
         let assessment = self.create_assessment(risk_result)?;
@@ -179,22 +188,31 @@ impl WarGamesSystem {
         Ok(AggregatedData {
             data_points: vec![
                 DataPoint {
-                    source: "SatelliteFeed".to_string(),
-                    timestamp: start + chrono::Duration::seconds(2),
-                    value: 0.78,
-                    description: Some("Detected increased military activity".to_string()),
+                    collected_at: start + chrono::Duration::seconds(2),
+                    ..DataPoint::new(
+                        "SatelliteFeed".to_string(),
+                        "Detected increased military activity".to_string(),
+                        DataCategory::MilitaryExercises,
+                    )
+                    .with_reliability(0.78)
                 },
                 DataPoint {
-                    source: "NewsAPI".to_string(),
-                    timestamp: start + chrono::Duration::seconds(5),
-                    value: 0.65,
-                    description: Some("Reported nuclear rhetoric escalation".to_string()),
+                    collected_at: start + chrono::Duration::seconds(5),
+                    ..DataPoint::new(
+                        "NewsAPI".to_string(),
+                        "Reported nuclear rhetoric escalation".to_string(),
+                        DataCategory::NewsMedia,
+                    )
+                    .with_reliability(0.65)
                 },
                 DataPoint {
-                    source: "SocialMedia".to_string(),
-                    timestamp: start + chrono::Duration::seconds(7),
-                    value: 0.55,
-                    description: Some("Trending topic: nuclear threat".to_string()),
+                    collected_at: start + chrono::Duration::seconds(7),
+                    ..DataPoint::new(
+                        "SocialMedia".to_string(),
+                        "Trending topic: nuclear threat".to_string(),
+                        DataCategory::LeadershipStatements,
+                    )
+                    .with_reliability(0.55)
                 },
             ],
             collection_start: start,
@@ -276,7 +294,8 @@ impl WarGamesSystem {
                 risk_result.risk_level.as_str(),
                 "moderate"
             ),
-            detailed_analysis: "Detailed analysis of all risk factors and their contributions.".to_string(),
+            detailed_analysis: "Detailed analysis of all risk factors and their contributions."
+                .to_string(),
             critical_warnings: vec![],
             recommendations: vec![
                 "Continue monitoring regional conflict zones".to_string(),
@@ -288,7 +307,10 @@ impl WarGamesSystem {
     }
 
     /// Generate visualizations for assessment
-    fn generate_visualizations(&self, assessment: &Assessment) -> Result<Vec<crate::visualizers::Visualization>> {
+    fn generate_visualizations(
+        &self,
+        assessment: &Assessment,
+    ) -> Result<Vec<crate::visualizers::Visualization>> {
         self.visualizer.generate_all(assessment)
     }
 
@@ -342,7 +364,9 @@ impl WarGamesSystem {
             assessment.overall_confidence,
             assessment.trend_direction,
             assessment.detailed_analysis,
-            assessment.recommendations.iter()
+            assessment
+                .recommendations
+                .iter()
                 .enumerate()
                 .map(|(i, r)| format!("{}. {}", i + 1, r))
                 .collect::<Vec<_>>()
