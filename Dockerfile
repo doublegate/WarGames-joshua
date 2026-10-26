@@ -6,7 +6,7 @@
 FROM rust:1.86-slim-bookworm AS builder
 
 # Install build dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     libssl-dev \
     libsqlite3-dev \
@@ -31,7 +31,7 @@ RUN cargo build --release --locked
 FROM debian:bookworm-slim
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libsqlite3-0 \
     libssl3 \
