@@ -3,10 +3,10 @@
 # Version: 1.0.0
 
 # Build stage
-FROM rust:1.75-slim-bullseye AS builder
+FROM rust:1.86-slim-bookworm AS builder
 
 # Install build dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     libssl-dev \
     libsqlite3-dev \
@@ -28,13 +28,13 @@ COPY migrations ./migrations
 RUN cargo build --release --locked
 
 # Runtime stage
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libsqlite3-0 \
-    libssl1.1 \
+    libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create app user

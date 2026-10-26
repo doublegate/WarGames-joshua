@@ -108,8 +108,7 @@ impl RiskCategory {
             | RiskCategory::CommunicationFailures
             | RiskCategory::EmergingTechnology
             | RiskCategory::EmergingTechRisks => 0.10,
-            RiskCategory::EconomicFactors
-            | RiskCategory::EconomicPressure => 0.05,
+            RiskCategory::EconomicFactors | RiskCategory::EconomicPressure => 0.05,
         }
     }
 }

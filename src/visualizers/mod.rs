@@ -188,10 +188,7 @@ impl Visualizer for DoomsdayClockVisualizer {
     fn visualize(&self, assessment: &Assessment) -> Result<Visualization> {
         std::fs::create_dir_all(&self.output_dir)?;
 
-        let file_name = format!(
-            "doomsday_clock_{}.svg",
-            Utc::now().format("%Y%m%d_%H%M%S")
-        );
+        let file_name = format!("doomsday_clock_{}.svg", Utc::now().format("%Y%m%d_%H%M%S"));
         let file_path = self.output_dir.join(&file_name);
 
         self.draw_clock(assessment.seconds_to_midnight, &file_path)?;

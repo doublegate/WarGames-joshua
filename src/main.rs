@@ -85,7 +85,10 @@ async fn run_assess(force: bool, output: &str, interactive: bool) -> Result<()> 
     println!("║        WarGames/JOSHUA Risk Assessment COMPLETE              ║");
     println!("╚══════════════════════════════════════════════════════════════╝\n");
     println!("Assessment ID: {}", assessment.id);
-    println!("Date: {}", assessment.assessment_date.format("%Y-%m-%d %H:%M:%S UTC"));
+    println!(
+        "Date: {}",
+        assessment.assessment_date.format("%Y-%m-%d %H:%M:%S UTC")
+    );
     println!();
     println!("🕐 SECONDS TO MIDNIGHT: {}", assessment.seconds_to_midnight);
     println!("📊 RISK LEVEL: {:?}", assessment.risk_level());
@@ -93,7 +96,10 @@ async fn run_assess(force: bool, output: &str, interactive: bool) -> Result<()> 
     println!("🎯 CONFIDENCE: {:?}", assessment.overall_confidence);
     println!();
     println!("Raw Risk Score: {:.3}", assessment.raw_risk_score);
-    println!("Bayesian Adjusted: {:.3}", assessment.bayesian_adjusted_score);
+    println!(
+        "Bayesian Adjusted: {:.3}",
+        assessment.bayesian_adjusted_score
+    );
     println!();
     println!("📄 Report and visualizations saved to ./output/");
     println!();

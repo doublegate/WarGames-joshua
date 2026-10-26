@@ -92,12 +92,12 @@ pub struct MonteCarloStatistics {
 /// Risk level categories
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RiskLevel {
-    Minimal,    // >900 seconds
-    Low,        // 600-900 seconds
-    Moderate,   // 400-600 seconds
-    High,       // 200-400 seconds
-    Severe,     // 100-200 seconds
-    Critical,   // <100 seconds
+    Minimal,  // >900 seconds
+    Low,      // 600-900 seconds
+    Moderate, // 400-600 seconds
+    High,     // 200-400 seconds
+    Severe,   // 100-200 seconds
+    Critical, // <100 seconds
 }
 
 impl RiskLevel {
@@ -252,15 +252,13 @@ impl RiskCalculationEngine {
     }
 
     /// Apply Bayesian adjustment based on historical priors
-    fn apply_bayesian_adjustment(
-        &self,
-        raw_score: f64,
-        factors: &[RiskFactor],
-    ) -> Result<f64> {
+    fn apply_bayesian_adjustment(&self, raw_score: f64, factors: &[RiskFactor]) -> Result<f64> {
         // Calculate average confidence
-        let avg_confidence: f64 =
-            factors.iter().map(|f| f.confidence.to_numeric()).sum::<f64>()
-                / factors.len().max(1) as f64;
+        let avg_confidence: f64 = factors
+            .iter()
+            .map(|f| f.confidence.to_numeric())
+            .sum::<f64>()
+            / factors.len().max(1) as f64;
 
         // Bayesian update: weighted average of raw score and historical baseline
         // Higher confidence = more weight on raw score
@@ -269,18 +267,14 @@ impl RiskCalculationEngine {
         let baseline_weight = (1.0 - avg_confidence) * self.config.bayesian_prior_strength;
 
         let total_weight = confidence_weight + baseline_weight;
-        let adjusted = (raw_score * confidence_weight
-            + self.historical_baseline * baseline_weight)
+        let adjusted = (raw_score * confidence_weight + self.historical_baseline * baseline_weight)
             / total_weight;
 
         Ok(adjusted.clamp(0.0, 1.0))
     }
 
     /// Run Monte Carlo simulation for uncertainty quantification
-    fn run_monte_carlo_simulation(
-        &self,
-        factors: &[RiskFactor],
-    ) -> Result<MonteCarloStatistics> {
+    fn run_monte_carlo_simulation(&self, factors: &[RiskFactor]) -> Result<MonteCarloStatistics> {
         let mut simulated_scores = Vec::with_capacity(self.config.monte_carlo_iterations);
 
         // Use deterministic variations instead of random sampling

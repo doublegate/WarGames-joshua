@@ -69,9 +69,7 @@ impl SecurityManager {
         // Extract API key (after salt)
         let parts: Vec<&str> = combined.split("::").collect();
         if parts.len() != 2 {
-            return Err(Error::Parsing(
-                "Invalid encrypted key format".to_string(),
-            ));
+            return Err(Error::Parsing("Invalid encrypted key format".to_string()));
         }
 
         Ok(parts[1].to_string())
@@ -102,9 +100,7 @@ impl SecurityManager {
     /// Load encrypted API key from secure storage
     pub fn load_encrypted_key(&self) -> Result<String> {
         if !self.keyring_path.exists() {
-            return Err(Error::Configuration(
-                "No stored API key found".to_string(),
-            ));
+            return Err(Error::Configuration("No stored API key found".to_string()));
         }
 
         std::fs::read_to_string(&self.keyring_path)
